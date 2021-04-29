@@ -1,0 +1,19 @@
+{
+  "name": "simpleingestor",
+  "version": "0.0.1",
+  "description": "simple node.js ingest benchmark for CrateDB",
+  "main": "main.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "keywords": [
+    "node",
+    "cratedb"
+  ],
+  "author": "Georg Traar <georg@crate.io> (https://gtraar.net/)",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "pg": "^8.6.0"
+  }
+}
