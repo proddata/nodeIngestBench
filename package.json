@@ -13,7 +13,9 @@
   "author": "Georg Traar <georg@crate.io> (https://gtraar.net/)",
   "license": "none",
   "dependencies": {
+    "axios": "^0.26.0",
     "dotenv": "^8.2.0",
+    "minimist": "^1.2.5",
     "pg": "^8.6.0"
   }
 }
