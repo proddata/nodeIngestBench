@@ -157,7 +157,8 @@ function getNewBufferSync() {
 
 async function updateBuffer(message) {
   args_buffer = message.args_buffer;
-  console.log("... Buffer updated");
+  let progress = (stats.inserts_done * options.batchsize).toLocaleString();
+  console.log("Buffer updated - sent: ", progress);
 }
 
 worker.on("message", updateBuffer);
@@ -170,4 +171,5 @@ worker.on("exit", code => {
 process.on("SIGTERM", function () {
   worker.postMessage({ exit: true });
   console.log("Finished all requests");
+  process.exit();
 });
