@@ -92,7 +92,7 @@ async function prepareTable() {
       crate_api_config
     );
   } catch (err) {
-    console.log(err);
+    console.log(err.response.data);
   }
 }
 
@@ -105,8 +105,6 @@ async function addInsert() {
         getNewBuffer();
       }
       addInsert();
-    } else {
-      setTimeout(addInsert, 10);
     }
   }
 }
@@ -125,6 +123,8 @@ async function insert() {
     stats.inserts_done++;
     if (stats.inserts_done == stats.inserts_max) {
       finish();
+    } else {
+      addInsert();
     }
   }
 }
@@ -157,7 +157,7 @@ function getNewBufferSync() {
 
 async function updateBuffer(message) {
   args_buffer = message.args_buffer;
-  let progress = (stats.inserts_done * options.batchsize).toLocaleString();
+  let progress = (stats.inserts * options.batchsize).toLocaleString();
   console.log("Buffer updated - sent: ", progress);
 }
 
@@ -168,8 +168,8 @@ worker.on("exit", code => {
     reject(new Error(`Stopped the Worker Thread with the exit code: ${code}`));
 });
 
-process.on("SIGTERM", function () {
+process.on("SIGINT", function () {
+  console.log("\nClosing worker thread");
   worker.postMessage({ exit: true });
-  console.log("Finished all requests");
   process.exit();
 });
