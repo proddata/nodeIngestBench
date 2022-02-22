@@ -14,7 +14,7 @@ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 apt update
 sudo apt-get install -y nodejs
 npm install
-node app.js --batchsize 20000 --max_rows 1000000 --table "doc.benchmark" --shards 12 --concurrent_request 20
+node app.js --batchsize 20000 --max_rows 1000000 --table "doc.benchmark" --shards 12 --concurrent_requests 20
 ```
 
 
@@ -33,7 +33,7 @@ CRATE_SSL=true
 3 nodes (10 vCPUs) CrateDB cluster
 
 ```bash
-node app.js --batchsize 20000 --max_rows 1000000 --table "doc.benchmark" --shards 12 --concurrent_request 20
+node app.js --batchsize 20000 --max_rows 1000000 --table "doc.benchmark" --shards 12 --concurrent_requests 20
 -------- Options ---------
 {
   dropTable: true,
