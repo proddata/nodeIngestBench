@@ -13,14 +13,8 @@ const worker = new Worker("./app_worker.js");
 const crateConfig = {
   user: process.env.CRATE_USER || "crate",
   host: process.env.CRATE_HOST || "localhost",
-  database: process.env.CRATE_DB || "doc",
   password: process.env.CRATE_PASSWORD || "",
-  port: process.env.CRATE_PORT || 5432,
-  ssl:
-    process.env.CRATE_SSL === undefined
-      ? false
-      : process.env.CRATE_SSL.toLowerCase() == "true",
-  max: process.env.CRATE_CONNECTIONS || 24
+  port: process.env.CRATE_PORT || 4200,
 };
 
 const options = {
