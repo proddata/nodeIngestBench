@@ -15,7 +15,6 @@
   "dependencies": {
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
-    "minimist": "^1.2.5",
-    "pg": "^8.7.3"
+    "minimist": "^1.2.5"
   }
 }
