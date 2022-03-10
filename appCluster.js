@@ -73,7 +73,7 @@ function messageHandler(msg) {
   stats_global.ts_end = Math.max(stats_global.ts_end, msg.ts_end);
 }
 
-function outputGlobalStats(stats_global) {
+function outputGlobalStats() {
   stats_global.time = stats_global.ts_end - stats_global.ts_start;
   stats_global.speed = stats_global.records / stats_global.time;
   console.log("\n-------- Global Results ---------");
