@@ -11,7 +11,7 @@ const dataGenerator = require("./modules/dataGenerator");
 const sqlGenerator = require("./modules/sqlGenerator");
 
 let crateConfig, options, activeProcesses;
-const stats_global = {
+const statsGlobal = {
   records: 0,
   ts_start: Number.MAX_VALUE,
   ts_end: Number.MIN_VALUE,
@@ -48,7 +48,7 @@ if (cluster.isMaster) {
   cluster.on("exit", () => {
     activeProcesses -= 1;
     if (activeProcesses == 0) {
-      outputGlobalStats(stats_global);
+      outputGlobalStats(statsGlobal);
     }
   });
 }
@@ -68,18 +68,18 @@ function setupProcesses() {
 }
 
 function messageHandler(msg) {
-  stats_global.records += msg.records;
-  stats_global.ts_start = Math.min(stats_global.ts_start, msg.ts_start);
-  stats_global.ts_end = Math.max(stats_global.ts_end, msg.ts_end);
+  statsGlobal.records += msg.records;
+  statsGlobal.ts_start = Math.min(statsGlobal.ts_start, msg.ts_start);
+  statsGlobal.ts_end = Math.max(statsGlobal.ts_end, msg.ts_end);
 }
 
 function outputGlobalStats() {
-  stats_global.time = stats_global.ts_end - stats_global.ts_start;
-  stats_global.speed = stats_global.records / stats_global.time;
+  statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
+  statsGlobal.speed = statsGlobal.records / statsGlobal.time;
   console.log("\n-------- Global Results ---------");
-  console.log("Time\t", stats_global.time.toLocaleString(), "s");
-  console.log("Rows\t", stats_global.records.toLocaleString(), "records");
-  console.log("Speed\t", stats_global.speed.toLocaleString(), "rows per sec");
+  console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
+  console.log("Rows\t", statsGlobal.records.toLocaleString(), "records");
+  console.log("Speed\t", statsGlobal.speed.toLocaleString(), "rows per sec");
   console.log("---------------------------------\n");
 }
 
@@ -95,11 +95,11 @@ if (cluster.isWorker) {
   options = env.options;
 
   // Axios CrateDB HTTP setup
-  const crate_api = `${crateConfig.ssl ? 'https' : 'http'}://${crateConfig.host}:${crateConfig.port}/_sql`;
+  const crateApi = `${crateConfig.ssl ? 'https' : 'http'}://${crateConfig.host}:${crateConfig.port}/_sql`;
   const agent = new https.Agent({
     rejectUnauthorized: false,
   });
-  const crate_api_config = {
+  const crateApiConfig = {
     auth: {
       username: crateConfig.user,
       password: crateConfig.password,
@@ -115,7 +115,7 @@ if (cluster.isWorker) {
     refresh: sqlGenerator.getRefreshTable(options.table),
   };
 
-  const args_buffer = getNewBufferSync();
+  const argsBuffer = getNewBufferSync();
 
   const stats = {
     inserts: 0,
@@ -128,7 +128,7 @@ if (cluster.isWorker) {
   setup();
 
   async function request(body) {
-    return axios.post(crate_api, body, crate_api_config);
+    return axios.post(crateApi, body, crateApiConfig);
   }
 
   async function setup() {
@@ -161,10 +161,10 @@ if (cluster.isWorker) {
   }
 
   async function insert() {
-    const args_buffer_no = stats.inserts % options.concurrent_requests;
+    const argsBufferNo = stats.inserts % options.concurrent_requests;
     const body = {
       stmt: STATEMENT.insert,
-      bulk_args: args_buffer[args_buffer_no],
+      bulk_args: argsBuffer[argsBufferNo],
     };
     try {
       await request(body);
