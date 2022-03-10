@@ -75,10 +75,6 @@ function randomInt(min, max) {
   return min + Math.floor(Math.random() * (max - min));
 }
 
-function randomFloat(min, max) {
-  return min + Math.random() * (max - min);
-}
-
 function randomString(base, min, max) {
   return base + (min + Math.floor(Math.random() * (max - min)));
 }
