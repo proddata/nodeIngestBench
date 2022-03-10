@@ -89,7 +89,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 // Worker
 if (cluster.isWorker) {
-  let env = JSON.parse(process.env["FORK_ENV"]);
+  let env = JSON.parse(process.env.FORK_ENV);
   crateConfig = env.crateConfig;
   options = env.options;
 
