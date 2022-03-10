@@ -1,8 +1,8 @@
 {
   "name": "node-ingest-bench",
   "version": "0.0.1",
-  "description": "simple node.js ingest benchmark for CrateDB",
-  "main": "main.js",
+  "description": "A multi-process Node.js ingest benchmark tool for CrateDB",
+  "main": "appCluster.js",
   "scripts": {
     "test": "test.js"
   },

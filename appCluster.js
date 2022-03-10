@@ -64,7 +64,7 @@ if (cluster.isMaster) {
     processes: Number(argv.processes) || totalCPUs,
     batchsize: Number(argv.batchsize) || 10000,
     max_rows: Number(argv.max_rows) || 1 * 1000 * 1000,
-    table: argv.table || "georg.cpu2",
+    table: argv.table || "doc.cpu",
     shards: Number(argv.shards) || 12,
     concurrent_requests: Number(argv.concurrent_requests) || 20,
   };
