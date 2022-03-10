@@ -3,7 +3,7 @@
 A multi-process Node.js script to run high-performance ingest benchmarks on CrateDB clusters.
 The script generates random data and runs batched insert statements against a single table using CrateDB's [HTTP endpoint](https://crate.io/docs/crate/reference/en/4.7/interfaces/http.html).
 
-The top measured performance with a single Node.js process was 1,200,000 rows/s.
+The top measured performance (single Node.js process, seven-node CrateDB cluster with 30 vCPUs each) was 1,200,000 rows/s.
 
 ## Setup
 
