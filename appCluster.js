@@ -17,6 +17,36 @@ const statsGlobal = {
   ts_end: Number.MIN_VALUE,
 };
 
+function messageHandler(msg) {
+  statsGlobal.records += msg.records;
+  statsGlobal.ts_start = Math.min(statsGlobal.ts_start, msg.ts_start);
+  statsGlobal.ts_end = Math.max(statsGlobal.ts_end, msg.ts_end);
+}
+
+function setupProcesses() {
+  activeProcesses = 0;
+  for (let i = 0; i < options.processes; i += 1) {
+    activeProcesses += 1;
+    options.process_id = i;
+    const env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
+    cluster.fork(env);
+  }
+
+  for (const id in cluster.workers) {
+    cluster.workers[id].on("message", messageHandler);
+  }
+}
+
+function outputGlobalStats() {
+  statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
+  statsGlobal.speed = statsGlobal.records / statsGlobal.time;
+  console.log("\n-------- Global Results ---------");
+  console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
+  console.log("Rows\t", statsGlobal.records.toLocaleString(), "records");
+  console.log("Speed\t", statsGlobal.speed.toLocaleString(), "rows per sec");
+  console.log("---------------------------------\n");
+}
+
 // Master
 if (cluster.isMaster) {
   console.log("CrateDB Ingest Bench Master started");
@@ -53,36 +83,6 @@ if (cluster.isMaster) {
   });
 }
 
-function setupProcesses() {
-  activeProcesses = 0;
-  for (let i = 0; i < options.processes; i += 1) {
-    activeProcesses += 1;
-    options.process_id = i;
-    const env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
-    cluster.fork(env);
-  }
-
-  for (const id in cluster.workers) {
-    cluster.workers[id].on("message", messageHandler);
-  }
-}
-
-function messageHandler(msg) {
-  statsGlobal.records += msg.records;
-  statsGlobal.ts_start = Math.min(statsGlobal.ts_start, msg.ts_start);
-  statsGlobal.ts_end = Math.max(statsGlobal.ts_end, msg.ts_end);
-}
-
-function outputGlobalStats() {
-  statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
-  statsGlobal.speed = statsGlobal.records / statsGlobal.time;
-  console.log("\n-------- Global Results ---------");
-  console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
-  console.log("Rows\t", statsGlobal.records.toLocaleString(), "records");
-  console.log("Speed\t", statsGlobal.speed.toLocaleString(), "rows per sec");
-  console.log("---------------------------------\n");
-}
-
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXX  WORKER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -115,6 +115,12 @@ if (cluster.isWorker) {
     refresh: sqlGenerator.getRefreshTable(options.table),
   };
 
+  function getNewBufferSync() {
+    return new Array(options.concurrent_requests).fill(
+      dataGenerator.getCPUObjectBulkArray(options.batchsize),
+    );
+  }
+
   const argsBuffer = getNewBufferSync();
 
   const stats = {
@@ -125,17 +131,8 @@ if (cluster.isWorker) {
     ts_end: -1,
   };
 
-  setup();
-
   async function request(body) {
     return axios.post(crateApi, body, crateApiConfig);
-  }
-
-  async function setup() {
-    await prepareTable();
-
-    stats.ts_start = Date.now() / 1000;
-    addInsert();
   }
 
   async function prepareTable() {
@@ -160,24 +157,11 @@ if (cluster.isWorker) {
     }
   }
 
-  async function insert() {
-    const argsBufferNo = stats.inserts % options.concurrent_requests;
-    const body = {
-      stmt: STATEMENT.insert,
-      bulk_args: argsBuffer[argsBufferNo],
-    };
-    try {
-      await request(body);
-    } catch (err) {
-      console.log(err.response.data);
-    } finally {
-      stats.inserts_done += 1;
-      if (stats.inserts_done === stats.inserts_max) {
-        finish();
-      } else {
-        addInsert();
-      }
-    }
+  async function setup() {
+    await prepareTable();
+
+    stats.ts_start = Date.now() / 1000;
+    addInsert();
   }
 
   async function finish() {
@@ -198,9 +182,25 @@ if (cluster.isWorker) {
     process.exit();
   }
 
-  function getNewBufferSync() {
-    return new Array(options.concurrent_requests).fill(
-      dataGenerator.getCPUObjectBulkArray(options.batchsize),
-    );
+  async function insert() {
+    const argsBufferNo = stats.inserts % options.concurrent_requests;
+    const body = {
+      stmt: STATEMENT.insert,
+      bulk_args: argsBuffer[argsBufferNo],
+    };
+    try {
+      await request(body);
+    } catch (err) {
+      console.log(err.response.data);
+    } finally {
+      stats.inserts_done += 1;
+      if (stats.inserts_done === stats.inserts_max) {
+        finish();
+      } else {
+        addInsert();
+      }
+    }
   }
+
+  setup();
 }

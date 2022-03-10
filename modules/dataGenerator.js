@@ -1,3 +1,15 @@
+function randomInt(min, max) {
+  return min + Math.floor(Math.random() * (max - min));
+}
+
+function randomString(base, min, max) {
+  return base + (min + Math.floor(Math.random() * (max - min)));
+}
+
+function randomStringFromArray(array) {
+  return array[randomInt(0, array.length)];
+}
+
 function getCPUObject() {
   const time = Date.now() + randomInt(-5, 15);
 
@@ -69,18 +81,6 @@ function getCPUObject() {
     usage_guest_nice: randomInt(0, 99),
   };
   return obj;
-}
-
-function randomInt(min, max) {
-  return min + Math.floor(Math.random() * (max - min));
-}
-
-function randomString(base, min, max) {
-  return base + (min + Math.floor(Math.random() * (max - min)));
-}
-
-function randomStringFromArray(array) {
-  return array[randomInt(0, array.length)];
 }
 
 function getCPUObjectBulkArray(num) {
