@@ -1,19 +1,31 @@
-function getCPUObject() {
-  let time =  Date.now() + randomInt(-5, 15);
+function randomInt(min, max) {
+  return min + Math.floor(Math.random() * (max - min));
+}
 
-  let obj = {
+function randomString(base, min, max) {
+  return base + (min + Math.floor(Math.random() * (max - min)));
+}
+
+function randomStringFromArray(array) {
+  return array[randomInt(0, array.length)];
+}
+
+function getCPUObject() {
+  const time = Date.now() + randomInt(-5, 15);
+
+  const obj = {
     tags: {
       hostname: randomString("host_", 0, 4000),
       rack: randomString("", 0, 99),
       service_environment: randomStringFromArray([
         "test",
         "staging",
-        "production"
+        "production",
       ]),
       os: randomStringFromArray([
         "Ubuntu16.10",
         "Ubuntu16.04LTS",
-        "Ubuntu15.10"
+        "Ubuntu15.10",
       ]),
       service: randomString("", 0, 19),
       datacenter: randomStringFromArray([
@@ -39,7 +51,7 @@ function getCPUObject() {
         "ap-southeast-1b",
         "ap-southeast-1a",
         "ap-northeast-1c",
-        "ap-northeast-1a"
+        "ap-northeast-1a",
       ]),
       arch: randomStringFromArray(["x86", "x64"]),
       team: randomStringFromArray(["SF", "NYC", "LON", "CHI"]),
@@ -53,8 +65,8 @@ function getCPUObject() {
         "eu-central-1",
         "ap-southeast-2",
         "ap-southeast-1",
-        "ap-northeast-1"
-      ])
+        "ap-northeast-1",
+      ]),
     },
     ts: time,
     usage_user: randomInt(0, 99),
@@ -66,33 +78,17 @@ function getCPUObject() {
     usage_softirq: randomInt(0, 99),
     usage_steal: randomInt(0, 99),
     usage_guest: randomInt(0, 99),
-    usage_guest_nice: randomInt(0, 99)
+    usage_guest_nice: randomInt(0, 99),
   };
   return obj;
 }
 
-function randomInt(min, max) {
-  return min + Math.floor(Math.random() * (max - min));
-}
-
-function randomFloat(min, max) {
-  return min + Math.random() * (max - min);
-}
-
-function randomString(base, min, max) {
-  return base + (min + Math.floor(Math.random() * (max - min)));
-}
-
-function randomStringFromArray(array) {
-  return array[randomInt(0, array.length)];
-}
-
-function getCPUObjectBulkArray(num){
-    let objs = new Array(num).fill({});
-    return objs.map(() => Object.values(getCPUObject()));
+function getCPUObjectBulkArray(num) {
+  const objs = new Array(num).fill({});
+  return objs.map(() => Object.values(getCPUObject()));
 }
 
 module.exports = {
-    getCPUObject,
-    getCPUObjectBulkArray,
-  };
+  getCPUObject,
+  getCPUObjectBulkArray,
+};

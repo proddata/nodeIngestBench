@@ -1,5 +1,3 @@
-
-
 function getDropTable(tableName) {
   return `DROP TABLE IF EXISTS ${tableName};`;
 }
@@ -39,17 +37,11 @@ function getNumDocs(tableName) {
          + ` WHERE schema_name || '.' || table_name = ${tableName}`;
 }
 
-function getNumDocs(tableName) {
-  return `SELECT SUM(num_docs) num_docs`
-        + `FROM sys.shards`
-        + `WHERE schema_name || '.' || table_name = ${tableName}`;
-}
-
 function getInsert(tableName) {
   return `INSERT INTO ${tableName} (tags, ts, usage_user, usage_system, `
           + `usage_idle, usage_nice, usage_iowait, usage_irq, usage_softirq, `
           + `usage_steal, usage_guest, usage_guest_nice) `
-          +` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+          + `VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 }
 
 function getRefreshTable(tableName) {
@@ -61,5 +53,5 @@ module.exports = {
   getDropTable,
   getNumDocs,
   getInsert,
-  getRefreshTable
+  getRefreshTable,
 };
