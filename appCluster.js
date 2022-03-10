@@ -14,7 +14,7 @@ let crateConfig, options, activeProcesses;
 let stats_global = {
   records: 0,
   ts_start: Number.MAX_VALUE,
-  ts_end: Number.MIN_VALUE
+  ts_end: Number.MIN_VALUE,
 };
 
 // Master
@@ -25,7 +25,7 @@ if (cluster.isMaster) {
     user: process.env.CRATE_USER || "crate",
     host: process.env.CRATE_HOST || "localhost",
     password: process.env.CRATE_PASSWORD || "",
-    port: process.env.CRATE_PORT || 4200
+    port: process.env.CRATE_PORT || 4200,
   };
 
   options = {
@@ -35,7 +35,7 @@ if (cluster.isMaster) {
     max_rows: Number(argv.max_rows) || 1 * 1000 * 1000,
     table: argv.table || "georg.cpu2",
     shards: Number(argv.shards) || 12,
-    concurrent_requests: Number(argv.concurrent_requests) || 20
+    concurrent_requests: Number(argv.concurrent_requests) || 20,
   };
 
   console.log("\n----------- Options -------------");
@@ -96,14 +96,14 @@ if (cluster.isWorker) {
   // Axios CrateDB HTTP setup
   const crate_api = `https://${crateConfig.host}:${crateConfig.port}/_sql`;
   const agent = new https.Agent({
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
   });
   const crate_api_config = {
     auth: {
       username: crateConfig.user,
-      password: crateConfig.password
+      password: crateConfig.password,
     },
-    httpsAgent: agent
+    httpsAgent: agent,
   };
 
   const STATEMENT = {
@@ -111,7 +111,7 @@ if (cluster.isWorker) {
     createTable: sqlGenerator.getCreateTable(options.table, options.shards),
     insert: sqlGenerator.getInsert(options.table),
     numDocs: sqlGenerator.getNumDocs(options.table),
-    refresh: sqlGenerator.getRefreshTable(options.table)
+    refresh: sqlGenerator.getRefreshTable(options.table),
   };
 
   let args_buffer = getNewBufferSync();
@@ -121,7 +121,7 @@ if (cluster.isWorker) {
     inserts_done: 0,
     inserts_max: Math.ceil(options.max_rows / options.batchsize),
     ts_start: -1,
-    ts_end: -1
+    ts_end: -1,
   };
 
   setup();
@@ -163,7 +163,7 @@ if (cluster.isWorker) {
     let args_buffer_no = stats.inserts % options.concurrent_requests;
     let body = {
       stmt: STATEMENT.insert,
-      bulk_args: args_buffer[args_buffer_no]
+      bulk_args: args_buffer[args_buffer_no],
     };
     try {
       await request(body);
@@ -199,7 +199,7 @@ if (cluster.isWorker) {
 
   function getNewBufferSync() {
     return new Array(options.concurrent_requests).fill(
-      dataGenerator.getCPUObjectBulkArray(options.batchsize)
+      dataGenerator.getCPUObjectBulkArray(options.batchsize),
     );
   }
 }
