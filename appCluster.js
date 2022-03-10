@@ -26,6 +26,7 @@ if (cluster.isMaster) {
     host: process.env.CRATE_HOST || "localhost",
     password: process.env.CRATE_PASSWORD || "",
     port: process.env.CRATE_PORT || 4200,
+    ssl: process.env.SSL === "true" || false,
   };
 
   options = {
@@ -94,7 +95,7 @@ if (cluster.isWorker) {
   options = env.options;
 
   // Axios CrateDB HTTP setup
-  const crate_api = `https://${crateConfig.host}:${crateConfig.port}/_sql`;
+  const crate_api = `${crateConfig.ssl ? 'https' : 'http'}://${crateConfig.host}:${crateConfig.port}/_sql`;
   const agent = new https.Agent({
     rejectUnauthorized: false,
   });
