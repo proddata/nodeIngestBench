@@ -47,7 +47,7 @@ if (cluster.isMaster) {
 
   cluster.on("exit", () => {
     activeProcesses -= 1;
-    if (activeProcesses == 0) {
+    if (activeProcesses === 0) {
       outputGlobalStats(statsGlobal);
     }
   });
@@ -152,7 +152,7 @@ if (cluster.isWorker) {
       if (stats.inserts - stats.inserts_done < options.concurrent_requests) {
         stats.inserts += 1;
         insert();
-        if (stats.inserts % options.concurrent_requests == 0) {
+        if (stats.inserts % options.concurrent_requests === 0) {
           getNewBufferSync();
         }
         addInsert();
@@ -172,7 +172,7 @@ if (cluster.isWorker) {
       console.log(err.response.data);
     } finally {
       stats.inserts_done += 1;
-      if (stats.inserts_done == stats.inserts_max) {
+      if (stats.inserts_done === stats.inserts_max) {
         finish();
       } else {
         addInsert();
