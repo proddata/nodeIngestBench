@@ -56,7 +56,7 @@ if (cluster.isMaster) {
     host: process.env.CRATE_HOST || "localhost",
     password: process.env.CRATE_PASSWORD || "",
     port: process.env.CRATE_PORT || 4200,
-    ssl: process.env.SSL === "true" || false,
+    ssl: process.env.CRATE_SSL === "true" || false,
   };
 
   options = {
