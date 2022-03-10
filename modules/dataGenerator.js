@@ -88,11 +88,11 @@ function randomStringFromArray(array) {
 }
 
 function getCPUObjectBulkArray(num) {
-    let objs = new Array(num).fill({});
-    return objs.map(() => Object.values(getCPUObject()));
+  let objs = new Array(num).fill({});
+  return objs.map(() => Object.values(getCPUObject()));
 }
 
 module.exports = {
-    getCPUObject,
-    getCPUObjectBulkArray,
-  };
+  getCPUObject,
+  getCPUObjectBulkArray,
+};
