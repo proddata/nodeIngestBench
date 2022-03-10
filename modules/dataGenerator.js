@@ -8,12 +8,12 @@ function getCPUObject() {
       service_environment: randomStringFromArray([
         "test",
         "staging",
-        "production"
+        "production",
       ]),
       os: randomStringFromArray([
         "Ubuntu16.10",
         "Ubuntu16.04LTS",
-        "Ubuntu15.10"
+        "Ubuntu15.10",
       ]),
       service: randomString("", 0, 19),
       datacenter: randomStringFromArray([
@@ -39,7 +39,7 @@ function getCPUObject() {
         "ap-southeast-1b",
         "ap-southeast-1a",
         "ap-northeast-1c",
-        "ap-northeast-1a"
+        "ap-northeast-1a",
       ]),
       arch: randomStringFromArray(["x86", "x64"]),
       team: randomStringFromArray(["SF", "NYC", "LON", "CHI"]),
@@ -53,8 +53,8 @@ function getCPUObject() {
         "eu-central-1",
         "ap-southeast-2",
         "ap-southeast-1",
-        "ap-northeast-1"
-      ])
+        "ap-northeast-1",
+      ]),
     },
     ts: time,
     usage_user: randomInt(0, 99),
@@ -66,7 +66,7 @@ function getCPUObject() {
     usage_softirq: randomInt(0, 99),
     usage_steal: randomInt(0, 99),
     usage_guest: randomInt(0, 99),
-    usage_guest_nice: randomInt(0, 99)
+    usage_guest_nice: randomInt(0, 99),
   };
   return obj;
 }

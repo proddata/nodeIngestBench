@@ -53,5 +53,5 @@ module.exports = {
   getDropTable,
   getNumDocs,
   getInsert,
-  getRefreshTable
+  getRefreshTable,
 };
