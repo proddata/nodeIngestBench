@@ -11,7 +11,7 @@ const dataGenerator = require("./modules/dataGenerator");
 const sqlGenerator = require("./modules/sqlGenerator");
 
 let crateConfig, options, activeProcesses;
-let stats_global = {
+const stats_global = {
   records: 0,
   ts_start: Number.MAX_VALUE,
   ts_end: Number.MIN_VALUE,
@@ -58,7 +58,7 @@ function setupProcesses() {
   for (let i = 0; i < options.processes; i += 1) {
     activeProcesses += 1;
     options.process_id = i;
-    let env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
+    const env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
     cluster.fork(env);
   }
 
@@ -90,7 +90,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 // Worker
 if (cluster.isWorker) {
-  let env = JSON.parse(process.env.FORK_ENV);
+  const env = JSON.parse(process.env.FORK_ENV);
   crateConfig = env.crateConfig;
   options = env.options;
 
@@ -115,9 +115,9 @@ if (cluster.isWorker) {
     refresh: sqlGenerator.getRefreshTable(options.table),
   };
 
-  let args_buffer = getNewBufferSync();
+  const args_buffer = getNewBufferSync();
 
-  let stats = {
+  const stats = {
     inserts: 0,
     inserts_done: 0,
     inserts_max: Math.ceil(options.max_rows / options.batchsize),
@@ -161,8 +161,8 @@ if (cluster.isWorker) {
   }
 
   async function insert() {
-    let args_buffer_no = stats.inserts % options.concurrent_requests;
-    let body = {
+    const args_buffer_no = stats.inserts % options.concurrent_requests;
+    const body = {
       stmt: STATEMENT.insert,
       bulk_args: args_buffer[args_buffer_no],
     };
@@ -186,7 +186,7 @@ if (cluster.isWorker) {
 
     stats.time = stats.ts_end - stats.ts_start;
     stats.records = stats.inserts_done * options.batchsize;
-    let speed = stats.records / stats.time;
+    const speed = stats.records / stats.time;
 
     console.log("-------- Results ---------");
     console.log("Time\t", stats.time.toLocaleString(), "s");

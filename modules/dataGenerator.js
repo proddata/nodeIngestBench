@@ -1,7 +1,7 @@
 function getCPUObject() {
-  let time = Date.now() + randomInt(-5, 15);
+  const time = Date.now() + randomInt(-5, 15);
 
-  let obj = {
+  const obj = {
     tags: {
       hostname: randomString("host_", 0, 4000),
       rack: randomString("", 0, 99),
@@ -84,7 +84,7 @@ function randomStringFromArray(array) {
 }
 
 function getCPUObjectBulkArray(num) {
-  let objs = new Array(num).fill({});
+  const objs = new Array(num).fill({});
   return objs.map(() => Object.values(getCPUObject()));
 }
 
