@@ -45,7 +45,7 @@ if (cluster.isMaster) {
   setupProcesses();
 
   cluster.on("exit", () => {
-    activeProcesses--;
+    activeProcesses -= 1;
     if (activeProcesses == 0) {
       outputGlobalStats(stats_global);
     }
@@ -54,8 +54,8 @@ if (cluster.isMaster) {
 
 function setupProcesses() {
   activeProcesses = 0;
-  for (let i = 0; i < options.processes; i++) {
-    activeProcesses++;
+  for (let i = 0; i < options.processes; i += 1) {
+    activeProcesses += 1;
     options.process_id = i;
     let env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
     cluster.fork(env);
@@ -149,7 +149,7 @@ if (cluster.isWorker) {
   async function addInsert() {
     if (stats.inserts <= stats.inserts_max) {
       if (stats.inserts - stats.inserts_done < options.concurrent_requests) {
-        stats.inserts++;
+        stats.inserts += 1;
         insert();
         if (stats.inserts % options.concurrent_requests == 0) {
           getNewBufferSync();
@@ -170,7 +170,7 @@ if (cluster.isWorker) {
     } catch (err) {
       console.log(err.response.data);
     } finally {
-      stats.inserts_done++;
+      stats.inserts_done += 1;
       if (stats.inserts_done == stats.inserts_max) {
         finish();
       } else {
