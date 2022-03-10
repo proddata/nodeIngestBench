@@ -16,5 +16,10 @@
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
     "minimist": "^1.2.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4"
   }
 }
