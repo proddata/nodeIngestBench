@@ -1,5 +1,5 @@
 function getCPUObject() {
-  let time =  Date.now() + randomInt(-5, 15);
+  let time = Date.now() + randomInt(-5, 15);
 
   let obj = {
     tags: {
@@ -87,7 +87,7 @@ function randomStringFromArray(array) {
   return array[randomInt(0, array.length)];
 }
 
-function getCPUObjectBulkArray(num){
+function getCPUObjectBulkArray(num) {
     let objs = new Array(num).fill({});
     return objs.map(() => Object.values(getCPUObject()));
 }

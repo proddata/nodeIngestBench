@@ -52,7 +52,7 @@ if (cluster.isMaster) {
   });
 }
 
-function setupProcesses(){
+function setupProcesses() {
   activeProcesses = 0;
   for (let i = 0; i < options.processes; i++) {
     activeProcesses++;
@@ -187,13 +187,11 @@ if (cluster.isWorker) {
     stats.records = stats.inserts_done * options.batchsize;
     let speed = stats.records / stats.time;
 
-    
     console.log("-------- Results ---------");
     console.log("Time\t", stats.time.toLocaleString(), "s");
     console.log("Rows\t", stats.records.toLocaleString(), "records");
     console.log("Speed\t", speed.toLocaleString(), "rows per sec");
     console.log("-------- Results ---------");
-    
 
     process.send(stats);
     process.exit();
