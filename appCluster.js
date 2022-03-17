@@ -114,7 +114,6 @@ if (cluster.isWorker) {
     dropTable: sqlGenerator.getDropTable(options.table),
     createTable: sqlGenerator.getCreateTable(options.table, options.shards),
     insert: sqlGenerator.getInsert(options.table),
-    numDocs: sqlGenerator.getNumDocs(options.table),
     refresh: sqlGenerator.getRefreshTable(options.table),
   };
 
