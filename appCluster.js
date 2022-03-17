@@ -107,6 +107,9 @@ if (cluster.isWorker) {
     httpsAgent: agent,
   };
 
+  // https://www.npmjs.com/package/axios#creating-an-instance
+  const httpclient = axios.create(crateApiConfig);
+
   const STATEMENT = {
     dropTable: sqlGenerator.getDropTable(options.table),
     createTable: sqlGenerator.getCreateTable(options.table, options.shards),
@@ -132,7 +135,7 @@ if (cluster.isWorker) {
   };
 
   async function request(body) {
-    return axios.post(crateApi, body, crateApiConfig);
+    return httpclient.post(crateApi, body);
   }
 
   async function prepareTable() {
