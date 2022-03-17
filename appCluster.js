@@ -25,15 +25,14 @@ function messageHandler(msg) {
 
 function setupProcesses() {
   activeProcesses = 0;
+  let worker;
+
   for (let i = 0; i < options.processes; i += 1) {
     activeProcesses += 1;
     options.process_id = i;
     const env = { FORK_ENV: JSON.stringify({ crateConfig, options }) };
-    cluster.fork(env);
-  }
-
-  for (const id in cluster.workers) {
-    cluster.workers[id].on("message", messageHandler);
+    worker = cluster.fork(env);
+    worker.on("message", messageHandler);
   }
 }
 
