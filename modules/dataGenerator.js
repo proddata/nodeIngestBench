@@ -13,7 +13,7 @@ function randomStringFromArray(array) {
 function getCPUObject() {
   const time = Date.now() + randomInt(-5, 15);
 
-  const obj = {
+  return {
     tags: {
       hostname: randomString("host_", 0, 4000),
       rack: randomString("", 0, 99),
@@ -80,7 +80,6 @@ function getCPUObject() {
     usage_guest: randomInt(0, 99),
     usage_guest_nice: randomInt(0, 99),
   };
-  return obj;
 }
 
 function getCPUObjectBulkArray(num) {
