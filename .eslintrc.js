@@ -13,8 +13,6 @@ module.exports = {
   rules: {
     "no-console": "off",
     "quotes": "off",
-    "one-var": "off",
-    "one-var-declaration-per-line": "off",
     "no-inner-declarations": "off",
     "no-use-before-define": "off",
   },

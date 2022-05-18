@@ -10,7 +10,7 @@ const https = require("https");
 const dataGenerator = require("./modules/dataGenerator");
 const sqlGenerator = require("./modules/sqlGenerator");
 
-let crateConfig, options, activeProcesses;
+let crateConfig; let options; let activeProcesses;
 const statsGlobal = {
   records: 0,
   ts_start: Number.MAX_VALUE,
