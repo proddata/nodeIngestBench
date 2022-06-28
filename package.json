@@ -13,13 +13,13 @@
   "author": "Georg Traar <georg@crate.io> (https://gtraar.net/)",
   "license": "none",
   "dependencies": {
-    "axios": "^0.26.0",
-    "dotenv": "^16.0.0",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "minimist": "^1.2.6"
   },
   "devDependencies": {
-    "eslint": "^8.10.0",
+    "eslint": "^8.18.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4"
+    "eslint-plugin-import": "^2.26.0"
   }
 }
