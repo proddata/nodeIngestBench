@@ -37,12 +37,17 @@ function setupProcesses() {
 }
 
 function outputGlobalStats() {
-  statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
-  statsGlobal.speed = statsGlobal.records / statsGlobal.time;
   console.log("\n-------- Global Results ---------");
-  console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
-  console.log("Rows\t", statsGlobal.records.toLocaleString(), "records");
-  console.log("Speed\t", statsGlobal.speed.toLocaleString(), "rows per sec");
+  if (statsGlobal.records > 0) {
+    statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
+    statsGlobal.speed = statsGlobal.records / statsGlobal.time;
+
+    console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
+    console.log("Rows\t", statsGlobal.records.toLocaleString(), "records");
+    console.log("Speed\t", statsGlobal.speed.toLocaleString(), "rows per sec");
+  } else {
+    console.log("No rows inserted");
+  }
   console.log("---------------------------------\n");
 }
 
@@ -187,14 +192,19 @@ if (cluster.isWorker) {
     stats.ts_end = Date.now() / 1000;
     await request({ stmt: STATEMENT.refresh });
 
-    stats.time = stats.ts_end - stats.ts_start;
     stats.records = stats.inserts_done * options.batchsize;
-    const speed = stats.records / stats.time;
 
     console.log("-------- Results ---------");
-    console.log("Time\t", stats.time.toLocaleString(), "s");
-    console.log("Rows\t", stats.records.toLocaleString(), "records");
-    console.log("Speed\t", speed.toLocaleString(), "rows per sec");
+    if (stats.records > 0) {
+      stats.time = stats.ts_end - stats.ts_start;
+      const speed = stats.records / stats.time;
+
+      console.log("Time\t", stats.time.toLocaleString(), "s");
+      console.log("Rows\t", stats.records.toLocaleString(), "records");
+      console.log("Speed\t", speed.toLocaleString(), "rows per sec");
+    } else {
+      console.log("No rows inserted");
+    }
     console.log("-------- Results ---------");
 
     process.send(stats);
