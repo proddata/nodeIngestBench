@@ -89,6 +89,7 @@ if (cluster.isMaster) {
     table: argv.table || "doc.cpu",
     shards: Number(argv.shards) || 12,
     concurrent_requests: Number(argv.concurrent_requests) || 20,
+    extraTagsLength: Number(argv.extra_tags_length) || 5,
   };
 
   console.log("\n----------- Options -------------");
@@ -141,7 +142,7 @@ if (cluster.isWorker) {
 
   function getNewBufferSync() {
     return new Array(options.concurrent_requests).fill(
-      dataGenerator.getCPUObjectBulkArray(options.batchsize),
+      dataGenerator.getCPUObjectBulkArray(options.batchsize, options.extraTagsLength),
     );
   }
 
