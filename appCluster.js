@@ -90,6 +90,7 @@ if (cluster.isMaster) {
     shards: Number(argv.shards) || 12,
     concurrent_requests: Number(argv.concurrent_requests) || 20,
     extraTagsLength: Number(argv.extra_tags_length) || 5,
+    replicas: Number(argv.replicas) || 0,
   };
 
   console.log("\n----------- Options -------------");
@@ -135,7 +136,7 @@ if (cluster.isWorker) {
 
   const STATEMENT = {
     dropTable: sqlGenerator.getDropTable(options.table),
-    createTable: sqlGenerator.getCreateTable(options.table, options.shards),
+    createTable: sqlGenerator.getCreateTable(options.table, options.shards, options.replicas),
     insert: sqlGenerator.getInsert(options.table),
     refresh: sqlGenerator.getRefreshTable(options.table),
   };

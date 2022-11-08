@@ -2,7 +2,7 @@ function getDropTable(tableName) {
   return `DROP TABLE IF EXISTS ${tableName};`;
 }
 
-function getCreateTable(tableName, shards) {
+function getCreateTable(tableName, shards, replicas) {
   return `CREATE TABLE IF NOT EXISTS ${tableName} (
     "tags" OBJECT(DYNAMIC) AS (
         "arch" TEXT,
@@ -28,7 +28,7 @@ function getCreateTable(tableName, shards) {
     "usage_guest" INTEGER,
     "usage_guest_nice" INTEGER
   ) CLUSTERED INTO ${shards} SHARDS
-    WITH (number_of_replicas = '0');`;
+    WITH (number_of_replicas = '${replicas}');`;
 }
 
 function getInsert(tableName) {

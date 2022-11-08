@@ -25,6 +25,8 @@ CRATE_SSL=true
 Start the benchmarking with `node appCluster.js`. The script takes several optional command-line parameters:
  * `table`: The name of the table used for benchmarking. The table will automatically be created if it doesn't exist yet.
  * `shards`: The number of shards that will be allocated for the table.
+ * `replicas`: The number or range of replicas to use for the table.
+ * `extra_tags_length`: The number of extra value added to the `tags` object in the table. This can be used to generate a wider table with more columns.
  * `dropTable`: If `true`, the table will be dropped and re-created when running the script.
  * `batchsize`: The number of rows that are inserted as part of a single `INSERT` statement.
  * `processes`: The number of child processes that will be spawned. Each child process inserts data independently.
