@@ -10,10 +10,10 @@ function randomStringFromArray(array) {
   return array[randomInt(0, array.length)];
 }
 
-function getCPUObject() {
+function getCPUObject(extraTagsLength = 0) {
   const time = Date.now() + randomInt(-5, 15);
 
-  return {
+  const cpuObject = {
     tags: {
       hostname: randomString("host_", 0, 4000),
       rack: randomString("", 0, 99),
@@ -80,11 +80,27 @@ function getCPUObject() {
     usage_guest: randomInt(0, 99),
     usage_guest_nice: randomInt(0, 99),
   };
+
+  for (let i = 0; i < extraTagsLength; i += 1) {
+    cpuObject.tags[`tag_${i}`] = randomStringFromArray([
+      "us-west-2",
+      "us-west-1",
+      "us-east-1",
+      "sa-east-1",
+      "eu-west-1",
+      "eu-central-1",
+      "ap-southeast-2",
+      "ap-southeast-1",
+      "ap-northeast-1",
+    ]);
+  }
+
+  return cpuObject;
 }
 
-function getCPUObjectBulkArray(num) {
+function getCPUObjectBulkArray(num, extraTagsLength = 0) {
   const objs = new Array(num).fill({});
-  return objs.map(() => Object.values(getCPUObject()));
+  return objs.map(() => Object.values(getCPUObject(extraTagsLength)));
 }
 
 module.exports = {
