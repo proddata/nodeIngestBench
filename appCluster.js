@@ -84,12 +84,12 @@ if (cluster.isMaster) {
   options = {
     dropTable: !(argv.drop_table === "false" && true),
     processes: Number(argv.processes) || totalCPUs,
-    batchsize: Number(argv.batchsize) || 10000,
-    max_rows: Number(argv.max_rows) || 1 * 1000 * 1000,
+    batchSize: Number(argv.batch_size) || 10000,
+    maxRows: Number(argv.max_rows) || 1 * 1000 * 1000,
     table: argv.table || "doc.cpu",
     shards: Number(argv.shards) || 12,
-    concurrent_requests: Number(argv.concurrent_requests) || 20,
-    extraTagsLength: Number(argv.extra_tags_length) || 5,
+    concurrentRequests: Number(argv.concurrent_requests) || 20,
+    extraTagsLength: Number(argv.extra_tags_length) || 0,
     replicas: Number(argv.replicas) || 0,
   };
 
@@ -142,7 +142,7 @@ if (cluster.isWorker) {
   };
 
   function getNewBufferSync() {
-    return new Array(options.concurrent_requests).fill(
+    return new Array(options.concurrentRequests).fill(
       dataGenerator.getCPUObjectBulkArray(options.batchsize, options.extraTagsLength),
     );
   }
@@ -152,7 +152,7 @@ if (cluster.isWorker) {
   const stats = {
     inserts: 0,
     inserts_done: 0,
-    inserts_max: Math.ceil(options.max_rows / options.batchsize),
+    inserts_max: Math.ceil(options.maxRows / options.batchSize),
     ts_start: -1,
     ts_end: -1,
   };
@@ -172,10 +172,10 @@ if (cluster.isWorker) {
 
   async function addInsert() {
     if (stats.inserts <= stats.inserts_max) {
-      if (stats.inserts - stats.inserts_done < options.concurrent_requests) {
+      if (stats.inserts - stats.inserts_done < options.concurrentRequests) {
         stats.inserts += 1;
         insert();
-        if (stats.inserts % options.concurrent_requests === 0) {
+        if (stats.inserts % options.concurrentRequests === 0) {
           getNewBufferSync();
         }
         addInsert();
@@ -194,7 +194,7 @@ if (cluster.isWorker) {
     stats.ts_end = Date.now() / 1000;
     await request({ stmt: STATEMENT.refresh });
 
-    stats.records = stats.inserts_done * options.batchsize;
+    stats.records = stats.inserts_done * options.batchSize;
 
     console.log("-------- Results ---------");
     if (stats.records > 0) {
@@ -214,7 +214,7 @@ if (cluster.isWorker) {
   }
 
   async function insert() {
-    const argsBufferNo = stats.inserts % options.concurrent_requests;
+    const argsBufferNo = stats.inserts % options.concurrentRequests;
     const body = {
       stmt: STATEMENT.insert,
       bulk_args: argsBuffer[argsBufferNo],
