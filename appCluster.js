@@ -143,7 +143,7 @@ if (cluster.isWorker) {
 
   function getNewBufferSync() {
     return new Array(options.concurrentRequests).fill(
-      dataGenerator.getCPUObjectBulkArray(options.batchsize, options.extraTagsLength),
+      dataGenerator.getCPUObjectBulkArray(options.batchSize, options.extraTagsLength),
     );
   }
 
