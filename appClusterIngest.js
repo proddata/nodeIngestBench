@@ -2,13 +2,12 @@ require("dotenv").config();
 const cluster = require("cluster");
 
 const totalCPUs = require("os").cpus().length;
-const argv = require("minimist")(process.argv.slice(2));
 
-const axios = require("axios");
-const https = require("https");
+const argv = require("minimist")(process.argv.slice(2));
 
 const dataGenerator = require("./modules/dataGenerator");
 const sqlGenerator = require("./modules/sqlGenerator");
+const HttpClient = require("./modules/httpClient");
 
 let crateConfig; let options; let activeProcesses;
 const statsGlobal = {
@@ -49,24 +48,6 @@ function outputGlobalStats() {
     console.log("No rows inserted");
   }
   console.log("---------------------------------\n");
-}
-
-function logError(error) {
-  if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
-    console.log(error.response.data);
-    console.log(error.response.status);
-    console.log(error.response.headers);
-  } else if (error.request) {
-    // The request was made but no response was received
-    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-    // http.ClientRequest in node.js
-    console.log(error.request);
-  } else {
-    // Something happened in setting up the request that triggered an Error
-    console.log('Error', error.message);
-  }
 }
 
 // Master
@@ -118,21 +99,13 @@ if (cluster.isWorker) {
   crateConfig = env.crateConfig;
   options = env.options;
 
-  // Axios CrateDB HTTP setup
-  const crateApi = `${crateConfig.ssl ? 'https' : 'http'}://${crateConfig.host}:${crateConfig.port}/_sql`;
-  const agent = new https.Agent({
-    rejectUnauthorized: false,
-  });
-  const crateApiConfig = {
-    auth: {
-      username: crateConfig.user,
-      password: crateConfig.password,
-    },
-    httpsAgent: agent,
-  };
-
-  // https://www.npmjs.com/package/axios#creating-an-instance
-  const httpclient = axios.create(crateApiConfig);
+  const httpclient = new HttpClient(
+    crateConfig.host,
+    crateConfig.port,
+    crateConfig.ssl,
+    crateConfig.user,
+    crateConfig.password,
+  );
 
   const STATEMENT = {
     dropTable: sqlGenerator.getDropTable(options.table),
@@ -157,21 +130,21 @@ if (cluster.isWorker) {
     ts_end: -1,
   };
 
-  async function request(body) {
-    return httpclient.post(crateApi, body);
+  async function query(body) {
+    return httpclient.query(body);
+  }
+
+  async function bulkInsert(statement, data) {
+    return httpclient.bulkInsert(statement, data);
   }
 
   async function prepareTable() {
-    try {
-      if (options.dropTable) await request({ stmt: STATEMENT.dropTable });
-      await request({ stmt: STATEMENT.createTable });
-    } catch (err) {
-      logError(err);
-    }
+    if (options.dropTable) await query(STATEMENT.dropTable);
+    await query(STATEMENT.createTable);
   }
 
   async function addInsert() {
-    if (stats.inserts <= stats.inserts_max) {
+    if (stats.inserts < stats.inserts_max) {
       if (stats.inserts - stats.inserts_done < options.concurrentRequests) {
         stats.inserts += 1;
         insert();
@@ -192,7 +165,7 @@ if (cluster.isWorker) {
 
   async function finish() {
     stats.ts_end = Date.now() / 1000;
-    await request({ stmt: STATEMENT.refresh });
+    await query(STATEMENT.refresh);
 
     stats.records = stats.inserts_done * options.batchSize;
 
@@ -215,21 +188,14 @@ if (cluster.isWorker) {
 
   async function insert() {
     const argsBufferNo = stats.inserts % options.concurrentRequests;
-    const body = {
-      stmt: STATEMENT.insert,
-      bulk_args: argsBuffer[argsBufferNo],
-    };
-    try {
-      await request(body);
-    } catch (err) {
-      logError(err);
-    } finally {
-      stats.inserts_done += 1;
-      if (stats.inserts_done === stats.inserts_max) {
-        finish();
-      } else {
-        addInsert();
-      }
+
+    await bulkInsert(STATEMENT.insert, argsBuffer[argsBufferNo]);
+
+    stats.inserts_done += 1;
+    if (stats.inserts_done === stats.inserts_max) {
+      finish();
+    } else {
+      addInsert();
     }
   }
 
