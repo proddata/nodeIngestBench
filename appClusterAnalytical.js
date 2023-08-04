@@ -67,9 +67,9 @@ if (cluster.isMaster) {
     queries: yaml.load(fs.readFileSync(argv.queries_config, 'utf8')),
   };
 
-  const proportionsSum = options.queries.reduce((total, query) => total + query.proportion, 0);
-  if (proportionsSum !== 1) {
-    throw new Error(`Query proportions do not sum up to one (was: ${proportionsSum})`);
+  const ratiosSum = options.queries.reduce((total, query) => total + query.ratio, 0);
+  if (ratiosSum !== 1) {
+    throw new Error(`Query ratios do not sum up to one (was: ${ratiosSum})`);
   }
 
   console.log("\n----------- Options -------------");
