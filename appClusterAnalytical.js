@@ -2,8 +2,8 @@ require("dotenv").config();
 const cluster = require("cluster");
 
 const fs = require("fs");
-
 const argv = require("minimist")(process.argv.slice(2));
+const yaml = require('js-yaml');
 
 const QueryWorker = require("./modules/queryWorker");
 
@@ -64,8 +64,13 @@ if (cluster.isMaster) {
     processes: Number(argv.processes) || 1,
     maxQueries: Number(argv.max_queries) || 100,
     concurrentRequests: Number(argv.concurrent_requests) || 20,
-    query: fs.readFileSync(argv.query_file, 'utf8').trimEnd(),
+    queries: yaml.load(fs.readFileSync(argv.queries_config, 'utf8')),
   };
+
+  const proportionsSum = options.queries.reduce((total, query) => total + query.proportion, 0);
+  if (proportionsSum !== 1) {
+    throw new Error(`Query proportions do not sum up to one (was: ${proportionsSum})`);
+  }
 
   console.log("\n----------- Options -------------");
   console.log(options);

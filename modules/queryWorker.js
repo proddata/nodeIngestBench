@@ -22,6 +22,30 @@ class QueryWorker {
       ts_start: -1,
       ts_end: -1,
     };
+
+    this.queryDistribution = null;
+  }
+
+  randomQuery() {
+    if (this.queryDistribution === null) {
+      this.queryDistribution = [];
+
+      /*
+       * Create an array with a cardinality of 100.
+       * The elements are query IDs, where the frequency of each ID matches the distribution.
+       * E.g. with query1: 0.4 and query2: 0.6, the array will have 40 times the ID of query1,
+       * and 60 times the ID of query2.
+       */
+      for (let i = 0; i < this.options.queries.length; i += 1) {
+        const weight = this.options.queries[i].proportion * 100;
+        for (let j = 0; j < weight; j += 1) {
+          this.queryDistribution.push(i);
+        }
+      }
+    }
+
+    return this.options.queries[Math.floor(Math.random() * this.options.queries.length)]
+      .query.trimEnd();
   }
 
   async request(body) {
@@ -29,7 +53,7 @@ class QueryWorker {
   }
 
   async query() {
-    await this.request(this.options.query);
+    await this.request(this.randomQuery());
 
     this.stats.queries_done += 1;
     if (this.stats.queries_done === this.stats.queries_max) {
