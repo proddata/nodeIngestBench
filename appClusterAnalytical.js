@@ -34,18 +34,20 @@ function setupProcesses() {
 }
 
 function outputGlobalStats() {
-  console.log("\n-------- Global Results ---------");
+  console.log("\n--------------- Global Results ----------------");
   if (statsGlobal.queries_done > 0) {
     statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
     statsGlobal.speed = statsGlobal.queries_done / statsGlobal.time;
+    statsGlobal.avg_runtime = statsGlobal.time / statsGlobal.queries_done;
 
-    console.log("Time\t", statsGlobal.time.toLocaleString(), "s");
-    console.log("Queries\t", statsGlobal.queries_done.toLocaleString(), "queries");
-    console.log("Speed\t", statsGlobal.speed.toLocaleString(), "queries per sec");
+    console.log("Time\t\t\t", statsGlobal.time.toLocaleString(), "s");
+    console.log("Queries\t\t\t", statsGlobal.queries_done.toLocaleString(), "queries");
+    console.log("Speed\t\t\t", statsGlobal.speed.toLocaleString(), "queries per sec");
+    console.log("Avg. runtime per query\t", statsGlobal.avg_runtime.toLocaleString(), "sec");
   } else {
     console.log("No queries ran");
   }
-  console.log("---------------------------------\n");
+  console.log("-----------------------------------------------\n");
 }
 
 // Master
