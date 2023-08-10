@@ -9,15 +9,15 @@ const QueryWorker = require("./modules/queryWorker");
 
 let crateConfig; let options; let activeProcesses;
 const statsGlobal = {
-  queries_done: 0,
-  ts_start: Number.MAX_VALUE,
-  ts_end: Number.MIN_VALUE,
+  queriesDone: 0,
+  tsStart: Number.MAX_VALUE,
+  tsEnd: Number.MIN_VALUE,
 };
 
 function messageHandler(msg) {
-  statsGlobal.queries_done += msg.queries_done;
-  statsGlobal.ts_start = Math.min(statsGlobal.ts_start, msg.ts_start);
-  statsGlobal.ts_end = Math.max(statsGlobal.ts_end, msg.ts_end);
+  statsGlobal.queriesDone += msg.queriesDone;
+  statsGlobal.tsStart = Math.min(statsGlobal.tsStart, msg.tsStart);
+  statsGlobal.tsEnd = Math.max(statsGlobal.tsEnd, msg.tsEnd);
 }
 
 function setupProcesses() {
@@ -35,15 +35,15 @@ function setupProcesses() {
 
 function outputGlobalStats() {
   console.log("\n--------------- Global Results ----------------");
-  if (statsGlobal.queries_done > 0) {
-    statsGlobal.time = statsGlobal.ts_end - statsGlobal.ts_start;
-    statsGlobal.speed = statsGlobal.queries_done / statsGlobal.time;
-    statsGlobal.avg_runtime = statsGlobal.time / statsGlobal.queries_done;
+  if (statsGlobal.queriesDone > 0) {
+    statsGlobal.time = statsGlobal.tsEnd - statsGlobal.tsStart;
+    statsGlobal.speed = statsGlobal.queriesDone / statsGlobal.time;
+    statsGlobal.avgRuntime = statsGlobal.time / statsGlobal.queriesDone;
 
     console.log("Time\t\t\t", statsGlobal.time.toLocaleString(), "s");
-    console.log("Queries\t\t\t", statsGlobal.queries_done.toLocaleString(), "queries");
+    console.log("Queries\t\t\t", statsGlobal.queriesDone.toLocaleString(), "queries");
     console.log("Speed\t\t\t", statsGlobal.speed.toLocaleString(), "queries per sec");
-    console.log("Avg. runtime per query\t", statsGlobal.avg_runtime.toLocaleString(), "sec");
+    console.log("Avg. runtime per query\t", statsGlobal.avgRuntime.toLocaleString(), "sec");
   } else {
     console.log("No queries ran");
   }

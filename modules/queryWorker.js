@@ -16,11 +16,11 @@ class QueryWorker {
     );
 
     this.stats = {
-      queries_started: 0,
-      queries_done: 0,
-      queries_max: env.options.maxQueries,
-      ts_start: -1,
-      ts_end: -1,
+      queriesStarted: 0,
+      queriesDone: 0,
+      queriesMax: env.options.maxQueries,
+      tsStart: -1,
+      tsEnd: -1,
     };
 
     this.queryDistribution = null;
@@ -55,8 +55,8 @@ class QueryWorker {
   async query() {
     await this.request(this.randomQuery());
 
-    this.stats.queries_done += 1;
-    if (this.stats.queries_done === this.stats.queries_max) {
+    this.stats.queriesDone += 1;
+    if (this.stats.queriesDone === this.stats.queriesMax) {
       this.finish();
     } else {
       this.addQuery();
@@ -64,9 +64,9 @@ class QueryWorker {
   }
 
   async addQuery() {
-    if (this.stats.queries_started < this.stats.queries_max) {
-      if (this.stats.queries_started - this.stats.queries_done < this.options.concurrentRequests) {
-        this.stats.queries_started += 1;
+    if (this.stats.queriesStarted < this.stats.queriesMax) {
+      if (this.stats.queriesStarted - this.stats.queriesDone < this.options.concurrentRequests) {
+        this.stats.queriesStarted += 1;
         this.query();
         this.addQuery();
       }
@@ -74,20 +74,20 @@ class QueryWorker {
   }
 
   async setup() {
-    this.stats.ts_start = Date.now() / 1000;
+    this.stats.tsStart = Date.now() / 1000;
     this.addQuery();
   }
 
   async finish() {
-    this.stats.ts_end = Date.now() / 1000;
+    this.stats.tsEnd = Date.now() / 1000;
 
     console.log("-------- Results ---------");
-    if (this.stats.queries_done > 0) {
-      this.stats.time = this.stats.ts_end - this.stats.ts_start;
-      const speed = this.stats.queries_done / this.stats.time;
+    if (this.stats.queriesDone > 0) {
+      this.stats.time = this.stats.tsEnd - this.stats.tsStart;
+      const speed = this.stats.queriesDone / this.stats.time;
 
       console.log("Time\t", this.stats.time.toLocaleString(), "s");
-      console.log("Queries\t", this.stats.queries_done.toLocaleString(), "queries");
+      console.log("Queries\t", this.stats.queriesDone.toLocaleString(), "queries");
       console.log("Speed\t", speed.toLocaleString(), "queries per sec");
     } else {
       console.log("No queries ran");
