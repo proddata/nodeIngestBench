@@ -19,6 +19,7 @@ class QueryWorker {
       queriesStarted: 0,
       queriesDone: 0,
       queriesMax: env.options.maxQueries,
+      queriesRuntime: 0,
       tsStart: -1,
       tsEnd: -1,
     };
@@ -48,12 +49,13 @@ class QueryWorker {
       .query.trimEnd();
   }
 
-  async request(body) {
+  request(body) {
     return this.httpclient.query(body);
   }
 
   async query() {
-    await this.request(this.randomQuery());
+    const response = await this.request(this.randomQuery());
+    this.stats.queriesRuntime += response.data.duration;
 
     this.stats.queriesDone += 1;
     if (this.stats.queriesDone === this.stats.queriesMax) {
@@ -81,18 +83,20 @@ class QueryWorker {
   async finish() {
     this.stats.tsEnd = Date.now() / 1000;
 
-    console.log("-------- Results ---------");
+    console.log("--------------- Results ----------------");
     if (this.stats.queriesDone > 0) {
       this.stats.time = this.stats.tsEnd - this.stats.tsStart;
       const speed = this.stats.queriesDone / this.stats.time;
+      const avgRuntime = this.stats.queriesRuntime / this.stats.queriesDone / 1000;
 
-      console.log("Time\t", this.stats.time.toLocaleString(), "s");
-      console.log("Queries\t", this.stats.queriesDone.toLocaleString(), "queries");
-      console.log("Speed\t", speed.toLocaleString(), "queries per sec");
+      console.log("Time\t\t", this.stats.time.toLocaleString(), "s");
+      console.log("Queries\t\t", this.stats.queriesDone.toLocaleString(), "queries");
+      console.log("Speed\t\t", speed.toLocaleString(), "queries per sec");
+      console.log("Avg. runtime\t", avgRuntime.toLocaleString(), "sec");
     } else {
       console.log("No queries ran");
     }
-    console.log("-------- Results ---------");
+    console.log("--------------- Results ----------------");
 
     process.send(this.stats);
     process.exit();

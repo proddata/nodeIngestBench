@@ -10,12 +10,14 @@ const QueryWorker = require("./modules/queryWorker");
 let crateConfig; let options; let activeProcesses;
 const statsGlobal = {
   queriesDone: 0,
+  queriesRuntime: 0,
   tsStart: Number.MAX_VALUE,
   tsEnd: Number.MIN_VALUE,
 };
 
 function messageHandler(msg) {
   statsGlobal.queriesDone += msg.queriesDone;
+  statsGlobal.queriesRuntime += msg.queriesRuntime;
   statsGlobal.tsStart = Math.min(statsGlobal.tsStart, msg.tsStart);
   statsGlobal.tsEnd = Math.max(statsGlobal.tsEnd, msg.tsEnd);
 }
@@ -38,7 +40,7 @@ function outputGlobalStats() {
   if (statsGlobal.queriesDone > 0) {
     statsGlobal.time = statsGlobal.tsEnd - statsGlobal.tsStart;
     statsGlobal.speed = statsGlobal.queriesDone / statsGlobal.time;
-    statsGlobal.avgRuntime = statsGlobal.time / statsGlobal.queriesDone;
+    statsGlobal.avgRuntime = statsGlobal.queriesRuntime / statsGlobal.queriesDone / 1000;
 
     console.log("Time\t\t\t", statsGlobal.time.toLocaleString(), "s");
     console.log("Queries\t\t\t", statsGlobal.queriesDone.toLocaleString(), "queries");
