@@ -12,7 +12,7 @@ module.exports = {
   },
   rules: {
     "no-console": "off",
-    "quotes": "off",
+    quotes: "off",
     "no-inner-declarations": "off",
     "no-use-before-define": "off",
   },
