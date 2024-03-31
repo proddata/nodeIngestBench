@@ -10,10 +10,11 @@ function randomStringFromArray(array) {
   return array[randomInt(0, array.length)];
 }
 
-function getCPUObject(extraTagsLength = 0) {
+function getCPUObject(extraTagsLength = 0, pk=0) {
   const time = Date.now() + randomInt(-5, 15);
 
   const cpuObject = {
+    pk,
     tags: {
       hostname: randomString("host_", 0, 4000),
       rack: randomString("", 0, 99),
@@ -98,9 +99,9 @@ function getCPUObject(extraTagsLength = 0) {
   return cpuObject;
 }
 
-function getCPUObjectBulkArray(num, extraTagsLength = 0) {
+function getCPUObjectBulkArray(num, extraTagsLength = 0, batch_no=0) {
   const objs = new Array(num).fill({});
-  return objs.map(() => Object.values(getCPUObject(extraTagsLength)));
+  return objs.map((_,i) => Object.values(getCPUObject(extraTagsLength, batch_no * num + i)));
 }
 
 export default {

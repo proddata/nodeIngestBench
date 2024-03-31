@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A multi-process Node.js ingest benchmark tool for CrateDB",
   "main": "appCluster.js",
+  "type": "module",
   "keywords": [
     "node",
     "cratedb"

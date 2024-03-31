@@ -1,14 +1,17 @@
-require("dotenv").config();
-const cluster = require("cluster");
+import dotenv from 'dotenv';
+dotenv.config();
 
-const totalCPUs = require("os").cpus().length;
-const argv = require("minimist")(process.argv.slice(2));
+import cluster from 'cluster';
+import os from 'os';
+import minimist from 'minimist';
+import axios from 'axios';
+import https from 'https';
 
-const axios = require("axios");
-const https = require("https");
+import dataGenerator from './modules/dataGenerator.js';
+import sqlGenerator from './modules/sqlGenerator.js';
 
-const dataGenerator = require("./modules/dataGenerator");
-const sqlGenerator = require("./modules/sqlGenerator");
+const totalCPUs = os.cpus().length;
+const argv = minimist(process.argv.slice(2));
 
 let crateConfig; let options; let activeProcesses;
 const statsGlobal = {

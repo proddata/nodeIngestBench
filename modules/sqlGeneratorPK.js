@@ -4,6 +4,7 @@ function getDropTable(tableName) {
 
 function getCreateTable(tableName, shards, replicas) {
   return `CREATE TABLE IF NOT EXISTS ${tableName} (
+    "pk" LONG,
     "tags" OBJECT(DYNAMIC) AS (
         "arch" TEXT,
         "datacenter" TEXT,
@@ -32,10 +33,10 @@ function getCreateTable(tableName, shards, replicas) {
 }
 
 function getInsert(tableName) {
-  return `INSERT INTO ${tableName} (tags, ts, usage_user, usage_system, `
+  return `INSERT INTO ${tableName} (pk, tags, ts, usage_user, usage_system, `
           + `usage_idle, usage_nice, usage_iowait, usage_irq, usage_softirq, `
           + `usage_steal, usage_guest, usage_guest_nice) `
-          + `VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+          + `VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 }
 
 function getRefreshTable(tableName) {
