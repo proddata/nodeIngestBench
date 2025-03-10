@@ -10,7 +10,7 @@
   "author": "Georg Traar <georg@crate.io> (https://gtraar.net/)",
   "license": "none",
   "dependencies": {
-    "axios": "^1.4",
+    "axios": "^1.8",
     "dotenv": "^16.3",
     "minimist": "^1.2"
   },
