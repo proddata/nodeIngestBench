@@ -20,6 +20,26 @@ CRATE_PORT=4200
 CRATE_SSL=true
 ```
 
+## Quality checks
+
+Run linting and tests:
+
+```bash
+npm run check
+```
+
+Available scripts:
+
+```bash
+npm run lint
+npm run lint:fix
+npm test
+npm run test:integration
+npm run test:all
+```
+
+The integration test uses [Testcontainers](https://testcontainers.com/) and requires a working Docker daemon.
+
 ## Running benchmarks
 
 Start the benchmarking with `node appCluster.js`. The script takes several optional command-line parameters:

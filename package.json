@@ -9,14 +9,23 @@
   ],
   "author": "Georg Traar <georg@crate.io> (https://gtraar.net/)",
   "license": "none",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --test test/unit/**/*.test.js",
+    "test:integration": "node --test test/integration/**/*.test.js",
+    "test:all": "npm run test && npm run test:integration",
+    "check": "npm run lint && npm run test"
+  },
   "dependencies": {
     "axios": "^1.8",
-    "dotenv": "^16.3",
+    "dotenv": "^17.3.1",
     "minimist": "^1.2"
   },
   "devDependencies": {
-    "eslint": "^8.44",
-    "eslint-config-airbnb-base": "^15.0",
-    "eslint-plugin-import": "^2.27"
+    "@eslint/js": "^9.39.1",
+    "eslint": "^10.0.2",
+    "globals": "^16.4.0",
+    "testcontainers": "^11.8.1"
   }
 }
